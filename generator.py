@@ -29,7 +29,7 @@ def join_walls(components, cell1, cell2):
     newComponents.append(newComponent)
     return newComponents, join
 
-def generate_maze(n):
+def generate_maze(n, extra_added = 0, extra_removed = 0):
     cells = [(i, j) for i in range(n) for j in range(n)]
     random.shuffle(cells)
     walls = []
@@ -55,29 +55,49 @@ def generate_maze(n):
             removed_walls.append(wall)
             remaining_walls.remove(wall)
 
-    print(remaining_walls)
+    # Remove extra_removed walls
+    random.shuffle(remaining_walls)
+    extra_removed_walls = []
+    for i in range(min(len(remaining_walls), extra_removed)):
+        extra_removed_walls.append(remaining_walls[i])
+    for wall in extra_removed_walls:
+        print(wall)
+        removed_walls.append(wall)
+        remaining_walls.remove(wall)
+
+
+    # Add back extra_added walls
+    random.shuffle(removed_walls)
+    extra_added_walls = []
+    for i in range(min(len(removed_walls), extra_added)):
+        extra_added_walls.append(removed_walls[i])
+    for wall in extra_added_walls:
+        remaining_walls.append(wall)
+        removed_walls.remove(wall)
+
+    # print(remaining_walls)
     # print(removed_walls)
     return remaining_walls
 
 
 def main():
     # Initialize the numbers to 0
-    extraRemoved, extraAdded = 0, 0
+    extra_removed, extra_added = 0, 0
 
     # Check if there are at least 2 arguments
     if len(sys.argv) > 1:
         try:
-            extraRemoved = int(sys.argv[1])
+            extra_removed = int(sys.argv[1])
         except ValueError:
-            extraRemoved = 0
+            extra_removed = 0
 
     if len(sys.argv) > 2:
         try:
-            extraAdded = int(sys.argv[2])
+            extra_added = int(sys.argv[2])
         except ValueError:
-            extraAdded = 0
+            extra_added = 0
 
-    generate_maze(3)
+    print(generate_maze(3, extra_added, extra_removed))
 
 if __name__ == "__main__":
     main()
