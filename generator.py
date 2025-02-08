@@ -29,6 +29,37 @@ def join_walls(components, cell1, cell2):
     newComponents.append(newComponent)
     return newComponents, join
 
+# Does a flood fill to check if all parts are reachable but only once
+def is_maze(n,  walls_removed):
+    visited_cells = set([(0, 0)])
+    boundary = set([(0, 0)])
+
+    while len(boundary) > 0:
+        destinations = set()
+        for cell in boundary:
+            for wall in walls_removed:
+                if wall[0] == cell and wall[1] not in visited_cells:
+                    if wall[1] in destinations:
+                        print("Cycle detected")
+                        return False
+                    destinations.add(wall[1])
+                elif wall[1] == cell and wall[0] not in visited_cells:
+                    if wall[0] in destinations:
+                        print("Cycle detected")
+                        return False
+                    destinations.add(wall[0])
+        visited_cells = visited_cells.union(destinations)
+        boundary = destinations
+
+    # check visited all possible cells
+    if len(visited_cells) != n*n:
+        print("Unreachable component detected")
+        return False
+
+    # Otherwise
+    return True
+
+
 def generate_maze(n, extra_added = 0, extra_removed = 0):
     cells = [(i, j) for i in range(n) for j in range(n)]
     random.shuffle(cells)
@@ -61,7 +92,6 @@ def generate_maze(n, extra_added = 0, extra_removed = 0):
     for i in range(min(len(remaining_walls), extra_removed)):
         extra_removed_walls.append(remaining_walls[i])
     for wall in extra_removed_walls:
-        print(wall)
         removed_walls.append(wall)
         remaining_walls.remove(wall)
 
@@ -75,10 +105,7 @@ def generate_maze(n, extra_added = 0, extra_removed = 0):
         remaining_walls.append(wall)
         removed_walls.remove(wall)
 
-    # print(remaining_walls)
-    # print(removed_walls)
-    return remaining_walls
-
+    return remaining_walls, removed_walls
 
 def main():
     # Initialize the numbers to 0
@@ -97,7 +124,17 @@ def main():
         except ValueError:
             extra_added = 0
 
-    print(generate_maze(3, extra_added, extra_removed))
+    looking_for_proper = not (extra_removed > 0 or extra_added > 0)
+
+    while True:
+        n = 3
+        remaining_walls, removed_walls = generate_maze(n, extra_added, extra_removed)
+        proper_maze = is_maze(n, removed_walls)
+        if proper_maze == looking_for_proper:
+            break
+
+    print(remaining_walls)
+    print(is_maze(n, removed_walls))
 
 if __name__ == "__main__":
     main()
