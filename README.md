@@ -12,3 +12,13 @@ Requires `pypng`. Run `pip install pypng`. Made to answer the question of if sta
 # i.e. first 2 arguments allow you to add or remove walls to deviate from normal maze behavior,
 # and the last argument lets you modify the maze dimensions from a default of 5x5.
 ```
+
+You can also use `batch.sh` and `batch.bat` to generate many mazes at a time.
+
+A proper 15x15 maze:
+
+![image](https://github.com/cgerrie/maze-generator/blob/master/proper_maze.png)
+
+An improper 15x15 maze. Note the unreachable areas and open areas allowing cycles:
+
+![image](https://github.com/cgerrie/maze-generator/blob/master/improper_maze.png)
